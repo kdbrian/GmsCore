@@ -28,6 +28,11 @@ import org.microg.gms.auth.AuthConstants
 import org.microg.gms.auth.AuthRequest
 import org.microg.gms.common.GmsService
 import org.microg.gms.common.PackageUtils
+import org.microg.gms.R
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+
 
 private const val TAG = "GmsWorkAccountService"
 
@@ -103,8 +108,11 @@ class WorkAccountServiceImpl(val context: Context) : IWorkAccountService.Stub() 
     ): Account? {
 
         if (!WorkProfileSettings(context).allowCreateWorkAccount) {
-            // TODO: communicate error to user (use `R.string.auth_work_authenticator_disabled_error`)
-            Log.w(TAG, "creating a work account is disabled in microG settings")
+            val errorMessage = context.getString(R.string.auth_work_authenticator_disabled_error)
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+            }
+            Log.w(TAG, errorMessage)
             return null
         }
 
